@@ -2,10 +2,13 @@ var auth = require('../lib/auth');
 
 var req = {
     data : {
-        collectionName : 'testcol',
-        query : {where : {test : 'data'}},
-        data : {test : 'data'},
-        keys : ['test']
+
+        checklist : ['APIAUTH', 'SESSION', 'MASTERKEY'],
+        headers : {
+            'x-noserv-session-token' : 'supertoken',
+            'x-noserv-application-id' : 'supertoken',
+            'x-noserv-master-key' : 'supertoken'
+        }
     }
 };
 
@@ -17,15 +20,25 @@ var res = function(done) {
     };
 };
 
+var dummyContainer = {
+    addListener : function(){},
+    getService : function(name) {
+
+        return {
+            then : function(callback){ callback({send : function(command, data, callback) {
+
+                callback(null, {data : {masterKey : 'test'}});
+            }});
+
+                return {fail : function(){}};
+            }
+        };
+    }
+};
+
 describe('auth', function() {
     describe('#init()', function () {
         it('should initialize without error', function (done) {
-
-            // manager service load
-            var dummyContainer = {
-                addListener: function () {
-                }
-            };
 
             auth.init(dummyContainer, function (err) {
 
@@ -37,13 +50,22 @@ describe('auth', function() {
     describe('#check()', function () {
         it('should check without error', function (done) {
 
-            // manager service load
-            var dummyContainer = {
-                addListener: function () {
-                }
-            };
+            auth.init(dummyContainer, function (err) {
+
+                auth.check(req, res(done));
+                auth.close(function() {});
+            });
+        });
+
+        it('should check another keys without error', function (done) {
 
             auth.init(dummyContainer, function (err) {
+
+                req.data.headers = {
+                    'x-noserv-session-token' : 'test',
+                    'x-noserv-application-id' : 'test',
+                    'x-noserv-master-key' : 'test'
+                };
 
                 auth.check(req, res(done));
                 auth.close(function() {});

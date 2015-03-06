@@ -8,6 +8,11 @@ var req = {
             'x-noserv-session-token' : 'supertoken',
             'x-noserv-application-id' : 'supertoken',
             'x-noserv-master-key' : 'supertoken'
+        },
+        session : {
+            appid : 'test',
+            userid : 'test',
+            masterKey : 'supertoken'
         }
     }
 };
@@ -27,7 +32,7 @@ var dummyContainer = {
         return {
             then : function(callback){ callback({send : function(command, data, callback) {
 
-                callback(null, {data : {masterKey : 'test'}});
+                callback(null, {data : {objectId : 'test', masterKey : 'test'}});
             }});
 
                 return {fail : function(){}};

@@ -38,6 +38,9 @@ var dummyContainer = {
                 return {fail : function(){}};
             }
         };
+    },
+    log : {
+        error : function() {}
     }
 };
 
